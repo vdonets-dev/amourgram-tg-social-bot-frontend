@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Card, Modal } from 'antd';
+import {Avatar, Card, Divider, Modal, Tabs} from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDeleteUserMutation, useGetUserQuery } from '../api/repository';
 import './user-item.scss';
 import InfoField from '../../../common/components/ui/info-field/info-field';
 import CardHeader, { UiButton } from '../../../common/components/ui/card-header/card-header';
 import { toast } from 'react-toastify';
+import {AndroidOutlined, AppleOutlined} from "@ant-design/icons";
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams();
@@ -60,27 +61,38 @@ const UserProfile: React.FC = () => {
 
   return (
     <Card
-      title={<CardHeader title="User info" backBtnLink="/users" isBackBtnVisible={true} buttons={cardActionButtons} />}
+      title={
+        <CardHeader
+          title={`User @${user?.username}`}
+          backBtnLink="/users"
+          isBackBtnVisible={true}
+          buttons={cardActionButtons}
+        />
+      }
       style={{ width: '100%' }}
     >
       <div className="user-info">
         <div className="user-info__avatar">
-          <Avatar src={'data:image/jpeg;base64,' + user?.photos[0].photoLob} size={120} />
+          <Avatar src={'data:image/jpeg;base64,' + user?.photos[0].photoLob} size={190} />
+          <span className="flag-icon">{user?.language?.emoji}</span>
         </div>
-        <div className="user-info__row">
-          <InfoField title="Name" text={user?.name} />
-          <InfoField title="Telegram nickname" text={user?.username} />
-          <InfoField title="Age" text={user?.age} />
-          <InfoField title="Sex" text={user?.sex} />
-          <InfoField title="City" text={user?.city} />
+        <div className="user-info__details">
+          <div className="user-info__row">
+            <InfoField title="Name" text={user?.name} />
+            <InfoField title="Age" text={user?.age} />
+            <InfoField title="Sex" text={user?.sex} />
+            <InfoField title="City" text={user?.city} />
+            <InfoField title="Target sex" text={user?.targetSex} />
+            <InfoField title="Search type" text={user?.communicationForm} />
+          </div>
+          <div className="user-info__row fullwidth">
+            <InfoField title="Purpose of dating" text={user?.purposeOfDating} />
+            <InfoField title="Description" text={user?.description || 'No description'} />
+          </div>
         </div>
-        <div className="user-info__row">
-          <InfoField title="Language" text={user?.language?.code || user?.language?.name} />
-          <InfoField title="Target sex" text={user?.targetSex} />
-          <InfoField title="Description" text={user?.description} />
-          <InfoField title="Purpose of dating" text={user?.purposeOfDating} />
-          <InfoField title="Communication form" text={user?.communicationForm} />
-        </div>
+      </div>
+      <div>
+        <Divider orientation="right">Event history</Divider>
       </div>
       <Modal title="User deletion" centered open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <p>Are you sure you want to delete {user?.name || 'this user'} ?</p>
